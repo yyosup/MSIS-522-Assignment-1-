@@ -62,7 +62,9 @@ with tab1:
     To ensure the highest accuracy, our approach involved a rigorous "tournament" between five different machine learning architectures: Logistic Regression, 
     Decision Trees, Random Forests, LightGBM, and a Neural Network (MLP). A major technical hurdle was the initial data imbalance, as survivors far outnumbered 
     fatalities. To solve this, we utilized a balanced undersampling technique, creating a robust training set of 10,000 records where both outcomes were represented 
-    equally.Our findings were definitive: The Neural Network (Multi-Layer Perceptron) emerged as the champion model, achieving an F1 score of approximately 0.9068. 
+    equally.
+    
+    Our findings were definitive: The Neural Network (Multi-Layer Perceptron) emerged as the champion model, achieving an F1 score of approximately 0.9068. 
     We discovered that while individual conditions like diabetes are significant, the interaction between advanced age and respiratory complications (pneumonia) served 
     as the most powerful predictor of patient mortality. This confirms that complex, non-linear models are essential for capturing the multifaceted nature of human health during a viral outbreak.
     """)
@@ -280,6 +282,7 @@ with tab4:
             fig, ax = plt.subplots()
             shap.plots.waterfall(user_shap_values[0])
             st.pyplot(fig)
+
 
 
 
