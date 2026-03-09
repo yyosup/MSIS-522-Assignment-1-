@@ -27,17 +27,16 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "Model Performance", "Risk Predictor"
 ])
 
-# TAB 1: EXECUTIVE SUMMARY
+# --- TAB 1: EXECUTIVE SUMMARY ---
 with tab1:
     st.header("Project Overview")
-    
     st.write("""
     This analysis is based on a comprehensive dataset of over 1 million anonymized patient records 
     related to COVID-19 cases. The data includes **17 diverse features** covering demographics and 
     a wide range of pre-existing comorbidities. 
     
     The primary prediction task is to determine **'DEATH'**—a binary outcome where 1 indicates 
-    patient mortality and 0 represents recovery. This tool is vital for hospital resource allocation.
+    patient mortality and 0 represents recovery. This task is vital for resource allocation and triage.
     """)
 
     st.subheader("Dataset Statistics & Features")
@@ -53,38 +52,39 @@ with tab1:
 
     st.subheader("Approach & Key Findings")
     st.write("""
-    Our modeling approach tested five algorithms: Logistic Regression, Decision Trees, Random Forests, 
-    LightGBM, and a Neural Network (MLP). Because the original data was highly imbalanced toward survivors, 
-    we utilized undersampling to create a balanced subset of 10,000 records. 
-    The Neural Network emerged as the top performer with an F1 score of 0.9084.
+    Our modeling approach involved testing five distinct algorithms: Logistic Regression, 
+    Decision Trees, Random Forests, LightGBM, and a Neural Network (MLP). Because the original 
+    dataset was highly imbalanced toward survivors, we utilized undersampling to create a 
+    balanced subset of 10,000 records. The Neural Network emerged as the top performer 
+    with an F1 score of approximately 0.9084.
     """)
 
-# TAB 2: DESCRIPTIVE ANALYTICS
+# --- TAB 2: DESCRIPTIVE ANALYTICS ---
 with tab2:
     st.header("Visualizing the Data")
-    st.write("Exploratory analysis reveals key patterns in patient mortality.")
+    st.write("Exploratory analysis reveals how demographics and comorbidities relate to patient outcomes.")
 
     st.subheader("Distribution of Patient Age")
     st.image("age_histogram.png") 
-    st.write("The age distribution shows a concentration in the 30-60 range. Age is a primary quantitative predictor for risk stratification.")
+    st.write("This histogram shows a wide distribution of ages, with a significant concentration of patients in the 30–60 age range. Age is used as a primary quantitative predictor for risk stratification.")
 
     st.subheader("Age Distribution by Mortality Outcome")
     st.image("age_boxplot.png")
-    st.write("The median age for deceased patients is significantly higher than for survivors, indicating higher susceptibility in older populations.")
+    st.write("The boxplot reveals that the median age for patients who died is significantly higher than for survivors. This confirms that older populations show a higher susceptibility to fatal outcomes.")
 
     st.subheader("Mortality Rate: Pneumonia vs. No Pneumonia")
     st.image("pneumonia_comparison_bar_graph.png")
-    st.write("Patients with pneumonia show a drastically higher mortality rate, marking respiratory health as a critical clinical 'red flag'.")
+    st.write("Patients with pre-existing pneumonia have a higher mortality rate compared to those without. For clinical triage, this suggests respiratory health is a critical 'red flag' for medical intervention.")
 
-    st.subheader("Mortality Risk by Sex and Diabetes")
+    st.subheader("Mortality Risk by Sex and Diabetes Status")
     st.image("mortality_risk_line_graph.png")
-    st.write("This explores the interaction between sex and diabetes, showing how combined comorbidities escalate risk beyond single-feature analysis.")
+    st.write("This plot explores the interaction between biological sex and diabetes. It reveals whether specific gender and comorbidity combinations face higher risks, providing nuanced clinical insights.")
 
     st.subheader("Correlation Heatmap of Patient Features")
     st.image("patient_features_heatmap.png")
-    st.write("Strong positive correlations are visible between hospitalization, pneumonia, and death, identifying the most influential predictors.")
+    st.write("The heatmap reveals a strong positive correlation between HOSPITALIZED, PNEUMONIA, and DEATH. These indicators are the strongest predictors of mortality within this dataset.")
 
-# TAB 3: MODEL PERFORMANCE
+# --- TAB 3: MODEL PERFORMANCE ---
 with tab3:
     st.header("Model Evaluation & Comparison")
 
@@ -98,25 +98,43 @@ with tab3:
     st.dataframe(pd.DataFrame(comparison_metrics), use_container_width=True)
 
     st.divider()
-    st.subheader("Visual Performance Analysis")
 
-    st.image("model_comparison_bar.png", caption="F1 Score Comparison")
-    st.write("The bar chart visualizes the predictive edge provided by ensemble and neural models. The Neural Network edges out the others in F1 score for this specific task.")
+    # 1. Model Comparison Bar Chart
+    st.subheader("F1 Score Comparison")
+    st.image("model_comparison_bar.png")
+    st.write("The evaluation reveals that the Neural Network performed best, achieving the highest F1 score. While the Neural Network showed strong predictive power, the tree-based ensemble models provided a superior balance between accuracy and training efficiency.")
 
-    st.image("best_decision_tree.png", caption="Decision Tree Logic Path")
-    st.write("The tree structure reveals that Hospitalization and Age are the most critical initial splitters. This provides a transparent 'if-then' roadmap for clinical audits.")
+    # 2. Decision Tree Structure
+    st.subheader("Decision Tree Logic Path")
+    st.image("best_decision_tree.png")
+    st.write("The visualization shows that HOSPITALIZED is the most significant initial splitter. For those hospitalized, AGE becomes the next most critical factor, allowing clinicians to follow a clear 'if-then' logic.")
+    
 
-    st.image("decision_tree_roc.png", caption="Decision Tree ROC Curve")
-    st.write("The Decision Tree ROC curve shows robust discriminatory power. It demonstrates that even an interpretable model can effectively separate high-risk cases.")
+    # 3. Decision Tree ROC
+    st.subheader("Decision Tree Performance")
+    st.image("decision_tree_roc.png")
+    st.write("The Decision Tree ROC curve shows robust discriminatory power. While slightly lower than ensemble methods, it offers transparency that is easier for clinical professionals to trust and audit.")
+    
 
-    st.image("random_forest_roc_curve.png", caption="Random Forest ROC Curve")
-    st.write("The Random Forest achieved an elite AUC of 0.9505. This indicates a near-perfect ability to distinguish between high-risk and low-risk patients.")
+    # 4. Random Forest ROC
+    st.subheader("Random Forest Performance")
+    st.image("random_forest_roc_curve.png")
+    st.write("The Random Forest model achieved an AUC-ROC of 0.9505. By aggregating 200 trees, the model reduces variance found in single trees, leading to more stable and reliable predictions.")
 
-    st.image("lightgbm_roc_curve.png", caption="LightGBM ROC Curve")
-    st.write("LightGBM performs nearly identically to the Random Forest, validating the power of gradient boosting on tabular clinical data.")
+    # 5. LightGBM ROC
+    st.subheader("LightGBM Performance")
+    st.image("lightgbm_roc_curve.png")
+    st.write("The high AUC-ROC score for LightGBM indicates the model is extremely effective at stratifying patient risk. It performs exceptionally well on tabular data with complex feature interactions.")
 
-    st.image("model_accuracy and model_loss.png", caption="Neural Network Training History")
-    st.write("The training history shows loss and accuracy converging steadily. The lack of a widening gap confirms the model is well-generalized and not overfitting.")
+    # 6. Neural Network Training
+    st.subheader("Neural Network Training History")
+    # You saved these as separate files or combined in your code; adjust as needed
+    if os.path.exists("model_loss.png"):
+        st.image("model_loss.png", caption="Model Loss History")
+    if os.path.exists("model_accuracy.png"):
+        st.image("model_accuracy.png", caption="Model Accuracy History")
+    st.write("The training history shows a healthy convergence, with both training and validation loss decreasing steadily. The lack of a significant gap indicates the model is not overfitting.")
+    
 
     st.divider()
     st.subheader("Optimized Hyperparameters")
@@ -126,7 +144,7 @@ with tab3:
     * **LightGBM**: `learning_rate: 0.05`, `max_depth: 4`, `n_estimators: 50`
     """)
 
-# TAB 4: RISK PREDICTOR
+# --- TAB 4: RISK PREDICTOR ---
 with tab4:
     st.header("Interactive Risk Predictor")
     
@@ -146,15 +164,14 @@ with tab4:
     c1, c2, c3 = st.columns(3)
     with c1:
         age_input = st.slider("Age", 0, 100, 50)
-        hosp_input = st.selectbox("Hospitalized (0=No, 1=Yes)", [0, 1])
+        hosp_input = st.selectbox("Hospitalized", [0, 1])
     with c2:
-        pneu_input = st.selectbox("Pneumonia (0=No, 1=Yes)", [0, 1])
-        covid_input = st.selectbox("COVID Positive (0=No, 1=Yes)", [0, 1])
+        pneu_input = st.selectbox("Pneumonia", [0, 1])
+        covid_input = st.selectbox("COVID Positive", [0, 1])
     with c3:
-        diab_input = st.selectbox("Diabetes (0=No, 1=Yes)", [0, 1])
+        diab_input = st.selectbox("Diabetes", [0, 1])
         sex_input = st.selectbox("Sex (0=Male, 1=Female)", [0, 1])
 
-    # Construct input dataframe
     user_input = pd.DataFrame([[sex_input, hosp_input, pneu_input, age_input, 0, diab_input, 0, 0, 0, 0, 0, 0, 0, 0, 0, covid_input]], 
                                columns=['SEX', 'HOSPITALIZED', 'PNEUMONIA', 'AGE', 'PREGNANT', 'DIABETES', 'COPD', 'ASTHMA', 
                                         'IMMUNOSUPPRESSION', 'HYPERTENSION', 'OTHER_DISEASE', 'CARDIOVASCULAR', 
@@ -183,9 +200,3 @@ with tab4:
             fig, ax = plt.subplots()
             shap.plots.waterfall(user_shap_values[0])
             st.pyplot(fig)
-        else:
-            st.info("Waterfall plots are available for tree-based models (LightGBM, Random Forest, Decision Tree).")
-
-
-
-
