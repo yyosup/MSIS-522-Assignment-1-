@@ -16,4 +16,4 @@ This project uses a dataset of over 1 million anonymized patient records to pred
 3. Run the app: `streamlit run app.py`
 
 ## Deployed App
-[INSERT YOUR PUBLIC STREAMLIT LINK HERE]
+[https://msis522assignment1.streamlit.app/#dataset-statistics-and-features]
