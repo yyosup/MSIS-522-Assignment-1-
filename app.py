@@ -32,7 +32,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
 with tab1:
     st.header("Project Overview")
     st.write("""
-    This dataset contains over **1 million anonymized patient records** related to COVID-19 cases, provided by the instructor for MSIS 522. 
+    This dataset contains over **1 million anonymized patient records** related to COVID-19 cases. 
     It serves as a comprehensive look at how demographic data (age, sex) and 17 pre-existing comorbidities—such as diabetes, 
     hypertension, and obesity—interact to influence patient outcomes.
     
@@ -276,3 +276,4 @@ with tab4:
             fig, ax = plt.subplots()
             shap.plots.waterfall(user_shap_values[0])
             st.pyplot(fig)
+
