@@ -43,7 +43,7 @@ with tab1:
     combination of health factors leads to the highest risk of fatal complications.
     
     **Why This Matters (The "So What"):**
-    st.write(The "so what" of this project lies in the reality of scarcity within healthcare systems. During a public health crisis, hospitals often reach a breaking point 
+    The "so what" of this project lies in the reality of scarcity within healthcare systems. During a public health crisis, hospitals often reach a breaking point 
     where the number of patients exceeds the number of available Intensive Care Unit (ICU) beds and ventilators. This project transforms raw medical data into a 
     triage support tool.
     Instead of treating every patient with a "first-come, first-served" approach, healthcare administrators can use these predictive insights to prioritize limited 
@@ -280,6 +280,7 @@ with tab4:
             fig, ax = plt.subplots()
             shap.plots.waterfall(user_shap_values[0])
             st.pyplot(fig)
+
 
 
 
