@@ -32,19 +32,18 @@ tab1, tab2, tab3, tab4 = st.tabs([
 with tab1:
     st.header("Project Overview")
     st.write("""
-    The Dataset & Predictive Objective
     This analysis utilizes a massive repository of over 1 million anonymized patient profiles capturing clinical encounters during the COVID-19 pandemic. 
     The data provides a high-dimensional view of patient health, featuring 17 distinct variables that range from basic demographics like age and biological 
     sex to a rigorous catalog of pre-existing comorbidities. These medical "red flags" include conditions such as hypertension, diabetes, obesity, and renal 
     chronic disease.
 
-    **The Prediciton Task**
+    **The Prediciton Task:**
     Our primary objective is to build a classification system for the 'DEATH' target variable. In this model, a value of 1 signifies mortality while 0 indicates 
     the patient was successfully discharged or recovered. By analyzing these historical records, we aim to uncover the hidden patterns that determine which 
     combination of health factors leads to the highest risk of fatal complications.
     
     **Why This Matters (The "So What"):**
-    The "so what" of this project lies in the reality of scarcity within healthcare systems. During a public health crisis, hospitals often reach a breaking point 
+    st.write(The "so what" of this project lies in the reality of scarcity within healthcare systems. During a public health crisis, hospitals often reach a breaking point 
     where the number of patients exceeds the number of available Intensive Care Unit (ICU) beds and ventilators. This project transforms raw medical data into a 
     triage support tool.
     Instead of treating every patient with a "first-come, first-served" approach, healthcare administrators can use these predictive insights to prioritize limited 
@@ -281,5 +280,6 @@ with tab4:
             fig, ax = plt.subplots()
             shap.plots.waterfall(user_shap_values[0])
             st.pyplot(fig)
+
 
 
