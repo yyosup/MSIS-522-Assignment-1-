@@ -32,7 +32,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
 with tab1:
     st.header("Project Overview")
     st.write("""
-    This dataset contains over 1 million anonymized patient records related to COVID-19 cases, provided by the instructor for MSIS 522. 
+    This dataset contains over **1 million anonymized patient records** related to COVID-19 cases, provided by the instructor for MSIS 522. 
     It serves as a comprehensive look at how demographic data (age, sex) and 17 pre-existing comorbidities—such as diabetes, 
     hypertension, and obesity—interact to influence patient outcomes.
     
@@ -119,10 +119,11 @@ with tab3:
 
     st.subheader("📊 Preprocessing Documentation")
     st.info("""
-    - **Feature Selection:** X includes age, comorbidities, and sex; y is the binary DEATH target.
-    - **Train/Test Split:** A 70/30 split (3,000 records) was used as a 'final exam' to ensure the models can generalize to new, unseen patients.
-    - **Encoding & Scaling:** Comorbidities are binary (0/1). AGE is standard (0-100). Tree-based models used are invariant to feature scaling, ensuring no information loss during normalization.
-    - **Missing Values:** Pre-cleaned; categorical unknowns treated as a distinct category to maintain data integrity.
+    **Preprocessing Documentation:**
+    - **Feature Selection:** I defined x as all patient features (age, comorbidities, sex) and y as the DEATH target.
+    - **Train/Test Split:** I performed a 70/30 split using random_state=42. This ensures that 30% of the data (3,000 records) is held out as a "final exam" for the models to test their ability to generalize to new patients.
+    - **Encoding & Scaling:** Since the comorbidities are already binary (0 or 1) and the AGE variable is on a relatively standard scale (0–100), no heavy encoding was required. However, using tree-based models like Random Forest and LightGBM is advantageous here as they are invariant to feature scaling.
+    - **Handling Missing Values:** The dataset was pre-cleaned; any remaining missing values in categorical fields were treated as a distinct "unknown" category to maintain the clinical integrity of the patient records.
     """)
 
     st.subheader("📈 Final Model Metrics")
@@ -139,9 +140,8 @@ with tab3:
     st.subheader("1. Overall Model Comparison")
     st.image("model_comparison_bar.png")
     st.write("""
-    The Logistic Regression model serves as our performance floor (F1: 0.9039). It establishes a baseline 
-    using linear relationships. However, the higher scores in the other models suggest that the 
-    relationship between COVID-19 comorbidities and death is fundamentally non-linear.
+    The Logistic Regression model serves as our performance floor. With an **F1 score of 0.9039**, it provides a reliable starting point using linear relationships between comorbidities and mortality. 
+    However, the higher scores in the other models suggest that the relationship between COVID-19 comorbidities and death is fundamentally non-linear.
     """)
 
     st.divider()
@@ -150,17 +150,21 @@ with tab3:
     st.write("**Best Decision Tree Test Metrics**")
     dt_metrics = {"Metric": ["Accuracy", "Precision", "Recall", "F1 Score", "AUC-ROC"], "Value": [0.8997, 0.8718, 0.9427, 0.9059, 0.9428]}
     st.table(pd.DataFrame(dt_metrics))
-    st.write("**Hyperparameters:** `{'max_depth': 4, 'min_samples_split': 40}`")
+    st.write("**Best Parameters:** `{'max_depth': 4, 'min_samples_split': 40}`")
 
     st.image("best_decision_tree.png", caption="Visualization of the Decision Tree Logic Path")
     st.write("""
-    The logic path shows that **HOSPITALIZED** is the most significant initial splitter. Patients falling 
-    into the Right branch (hospitalized) show a much higher immediate probability of death. For those 
-    hospitalized, **AGE** is the next critical factor. For those not hospitalized, **PNEUMONIA** is the 
-    primary indicator of secondary risk. This transparency allows a clinician to audit the model's logic.
+    The visualization shows that **HOSPITALIZED** is the most significant initial splitter for determining mortality risk. Patients falling 
+    into the Right branch (those who were hospitalized, satisfying the clinical condition) show a much higher immediate probability of death. For those 
+    hospitalized, **AGE** is the next critical factor in risk stratification. For patients not hospitalized (the Left branch), the presence of **PNEUMONIA** is the 
+    primary indicator of secondary risk. This model allows a clinician to follow the "if-then" logic to understand a specific patient's risk profile based on their symptoms and demographics.
     """)
     st.image("decision_tree_roc.png")
-    st.write("The Decision Tree ROC curve (AUC 0.9428) shows strong discriminatory power, especially for a single-tree model.")
+    st.write("""
+    The Decision Tree ROC curve visualizes the trade-off between the true positive rate and false positive rate. 
+    With an AUC-ROC of **0.9428**, the model demonstrates strong discriminatory power, efficiently separating 
+    survivors from high-risk patients.
+    """)
 
     st.divider()
 
@@ -168,13 +172,13 @@ with tab3:
     st.write("**Best Random Forest Test Metrics**")
     rf_metrics = {"Metric": ["Accuracy", "Precision", "Recall", "F1 Score", "AUC-ROC"], "Value": [0.8990, 0.8712, 0.9421, 0.9053, 0.9505]}
     st.table(pd.DataFrame(rf_metrics))
-    st.write("**Hyperparameters:** `{'max_depth': 8, 'n_estimators': 200}`")
+    st.write("**Best Parameters:** `{'max_depth': 8, 'n_estimators': 200}`")
 
     st.image("random_forest_roc_curve.png")
     st.write("""
-    The Random Forest achieved a high AUC-ROC of **0.9505**. By aggregating 200 trees, the model 
-    drastically reduces variance, leading to more stable predictions across diverse demographics. 
-    It excels at capturing interactions that single trees miss.
+    The Random Forest model achieved an AUC-ROC of **0.9505**, indicating a high ability to distinguish between survivors and high-risk patients. 
+    By aggregating 200 different trees (as seen in our best parameters), the model reduces the variance found in the single Decision Tree, 
+    leading to more stable and reliable predictions across diverse patient demographics.
     """)
 
     st.divider()
@@ -183,13 +187,13 @@ with tab3:
     st.write("**Best LightGBM Test Metrics**")
     lgb_metrics = {"Metric": ["Accuracy", "Precision", "Recall", "F1 Score", "AUC-ROC"], "Value": [0.8963, 0.8720, 0.9349, 0.9024, 0.9501]}
     st.table(pd.DataFrame(lgb_metrics))
-    st.write("**Hyperparameters:** `{'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 50}`")
+    st.write("**Best Parameters:** `{'learning_rate': 0.05, 'max_depth': 4, 'n_estimators': 50}`")
 
     st.image("lightgbm_roc_curve.png")
     st.write("""
-    With an AUC of **0.9501**, LightGBM is extremely effective at stratifying risk. It uses 
-    gradient boosting to focus on the hardest-to-predict cases, making it a high-performance 
-    triage tool for clinical settings.
+    In this dataset, the high AUC-ROC score of **0.9501** indicates that the model is extremely effective at stratifying patient risk, 
+    allowing for accurate triage in a clinical setting. Gradient boosting focuses on correcting errors of previous iterations, 
+    making it a high-performance tool for identifying complex interactions between comorbidities.
     """)
 
     st.divider()
@@ -203,21 +207,21 @@ with tab3:
         st.image("model_accuracy and model_loss.png")
     
     st.write("""
-    The training history plots show a healthy convergence, with both training and validation loss decreasing 
-    steadily over 5 epochs. The lack of a significant gap confirms the model is not overfitting. 
-    The stable plateau in accuracy suggests the network has successfully learned the complex patterns 
-    linking health indicators to mortality.
+    The training history plots show a healthy convergence, with both training and validation loss decreasing steadily over 5 epochs. 
+    The lack of a significant gap between the training and validation accuracy indicates that the model is not overfitting. 
+    Specifically, the **Model Loss** plot shows a smooth decline, while the **Model Accuracy** plot reaches a stable plateau, confirming 
+    the network has effectively learned the patterns without memorizing noise.
     """)
 
     st.divider()
     st.subheader("Clinical Summary & Trade-offs")
     st.write("""
-    While the **Neural Network** performed best overall (F1: 0.9068), the tree-based models offer 
-    a superior balance between speed and performance.
+    The evaluation reveals that the **Neural Network** performed best (F1: 0.9068), achieving strong predictive power. However, the tree-based 
+    ensemble models (LightGBM and Random Forest) provided a superior balance between accuracy and training efficiency.
     
-    **The Trade-off:** Accuracy vs. Interpretability. Black-box models like the MLP provide deep insights, 
-    but "white-box" models like the Decision Tree offer the transparent "if-then" logic required 
-    for regulatory approval and clinical trust.
+    **The Trade-off:** Accuracy vs. Interpretability. While the MLP is more accurate, the Decision Tree offers transparent 'if-then' logic 
+    easier for clinical professionals to trust and audit. Given the high stakes of mortality prediction, the Neural Network is recommended 
+    for deployment due to its ability to handle complex comorbidity interactions.
     """)
 
 # --- TAB 4: RISK PREDICTOR ---
@@ -230,11 +234,12 @@ with tab4:
     
     st.write("""
     - **Strongest Impact:** The features with the strongest impact on mortality are **HOSPITALIZED, AGE, and PNEUMONIA**.
-    - **Direction of Influence:** - **Hospitalization:** Admitted patients see a massive push toward high-risk scores.
-        - **Age:** Clear positive correlation; higher age equals higher SHAP values (higher risk).
+    - **Direction of Influence:** 
+        - **Hospitalization:** Admitted patients see a massive push toward high-mortality outcomes.
+        - **Age:** Clear positive correlation; higher age increases the risk significantly.
         - **Pneumonia:** Presence acts as a definitive risk multiplier.
-    - **Clinical Utility:** Clinicians can use these insights to see that a patient's risk isn't just a 
-      number, but a combination of specific interactions, allowing for personalized care pathways.
+    - **Clinical Utility:** Clinicians can use these insights to see that a patient's risk isn't just a number, 
+      but a combination of specific interactions, allowing for personalized care pathways.
     """)
 
     st.divider()
@@ -258,13 +263,15 @@ with tab4:
         else:
             selected = {"LightGBM": lgbm_model, "Random Forest": rf_model, "Logistic Regression": lr_model, "Decision Tree": dt_model}[model_choice]
             prediction = selected.predict(user_input)[0]
-            prob = selected_model.predict_proba(user_input)[0][1] if hasattr(selected, "predict_proba") else 0.5
+            # FIX: Use 'selected' instead of 'selected_model'
+            prob = selected.predict_proba(user_input)[0][1] if hasattr(selected, "predict_proba") else 0.5
         
         if prediction == 1: st.error(f"High Mortality Risk (Prob: {prob:.2%})")
         else: st.success(f"Recovery Likely (Prob: {prob:.2%})")
 
         if model_choice in ["LightGBM", "Random Forest", "Decision Tree"]:
-            explainer = shap.TreeExplainer({"LightGBM": lgbm_model, "Random Forest": rf_model, "Decision Tree": dt_model}[model_choice])
+            selected_shap = {"LightGBM": lgbm_model, "Random Forest": rf_model, "Decision Tree": dt_model}[model_choice]
+            explainer = shap.TreeExplainer(selected_shap)
             user_shap_values = explainer(user_input)
             fig, ax = plt.subplots()
             shap.plots.waterfall(user_shap_values[0])
