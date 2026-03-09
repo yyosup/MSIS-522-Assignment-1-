@@ -56,7 +56,7 @@ with tab1:
     Decision Trees, Random Forests, LightGBM, and a Neural Network (MLP). Because the original 
     dataset was highly imbalanced toward survivors, we utilized undersampling to create a 
     balanced subset of 10,000 records. The Neural Network emerged as the top performer 
-    with an F1 score of approximately 0.9084.
+    with an F1 score of approximately 0.9068.
     """)
 
 # --- TAB 2: DESCRIPTIVE ANALYTICS ---
@@ -99,42 +99,34 @@ with tab3:
 
     st.divider()
 
+    st.subheader("Visual Performance Analysis")
+
     # 1. Model Comparison Bar Chart
-    st.subheader("F1 Score Comparison")
-    st.image("model_comparison_bar.png")
+    st.image("model_comparison_bar.png", caption="F1 Score Comparison")
     st.write("The evaluation reveals that the Neural Network performed best, achieving the highest F1 score. While the Neural Network showed strong predictive power, the tree-based ensemble models provided a superior balance between accuracy and training efficiency.")
 
     # 2. Decision Tree Structure
-    st.subheader("Decision Tree Logic Path")
-    st.image("best_decision_tree.png")
+    st.image("best_decision_tree.png", caption="Decision Tree Logic Path")
     st.write("The visualization shows that HOSPITALIZED is the most significant initial splitter. For those hospitalized, AGE becomes the next most critical factor, allowing clinicians to follow a clear 'if-then' logic.")
-    
 
     # 3. Decision Tree ROC
-    st.subheader("Decision Tree Performance")
-    st.image("decision_tree_roc.png")
+    st.image("decision_tree_roc.png", caption="Decision Tree ROC Curve")
     st.write("The Decision Tree ROC curve shows robust discriminatory power. While slightly lower than ensemble methods, it offers transparency that is easier for clinical professionals to trust and audit.")
-    
 
     # 4. Random Forest ROC
-    st.subheader("Random Forest Performance")
-    st.image("random_forest_roc_curve.png")
+    st.image("random_forest_roc_curve.png", caption="Random Forest ROC Curve")
     st.write("The Random Forest model achieved an AUC-ROC of 0.9505. By aggregating 200 trees, the model reduces variance found in single trees, leading to more stable and reliable predictions.")
 
     # 5. LightGBM ROC
-    st.subheader("LightGBM Performance")
-    st.image("lightgbm_roc_curve.png")
+    st.image("lightgbm_roc_curve.png", caption="LightGBM ROC Curve")
     st.write("The high AUC-ROC score for LightGBM indicates the model is extremely effective at stratifying patient risk. It performs exceptionally well on tabular data with complex feature interactions.")
 
     # 6. Neural Network Training
-    st.subheader("Neural Network Training History")
-    # You saved these as separate files or combined in your code; adjust as needed
     if os.path.exists("model_loss.png"):
         st.image("model_loss.png", caption="Model Loss History")
     if os.path.exists("model_accuracy.png"):
         st.image("model_accuracy.png", caption="Model Accuracy History")
-    st.write("The training history shows a healthy convergence, with both training and validation loss decreasing steadily. The lack of a significant gap indicates the model is not overfitting.")
-    
+    st.write("The training history plots show a healthy convergence, with both training and validation loss decreasing steadily. The lack of a significant gap indicates the model is not overfitting.")
 
     st.divider()
     st.subheader("Optimized Hyperparameters")
@@ -200,3 +192,5 @@ with tab4:
             fig, ax = plt.subplots()
             shap.plots.waterfall(user_shap_values[0])
             st.pyplot(fig)
+        else:
+            st.info("Waterfall plots are best visualized for the tree-based models in this application.")
