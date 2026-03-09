@@ -32,18 +32,24 @@ tab1, tab2, tab3, tab4 = st.tabs([
 with tab1:
     st.header("Project Overview")
     st.write("""
-    This dataset contains over **1 million anonymized patient records** related to COVID-19 cases. 
-    It serves as a comprehensive look at how demographic data (age, sex) and 17 pre-existing comorbidities—such as diabetes, 
-    hypertension, and obesity—interact to influence patient outcomes.
-    
-    **The Prediction Task:** The primary goal is to predict the **DEATH** target variable. This is a binary indicator where 1 represents patient mortality 
-    and 0 represents recovery. This predictive capability allows healthcare systems to move from reactive treatment to proactive risk management.
+    The Dataset & Predictive Objective
+    This analysis utilizes a massive repository of over 1 million anonymized patient profiles capturing clinical encounters during the COVID-19 pandemic. 
+    The data provides a high-dimensional view of patient health, featuring 17 distinct variables that range from basic demographics like age and biological 
+    sex to a rigorous catalog of pre-existing comorbidities. These medical "red flags" include conditions such as hypertension, diabetes, obesity, and renal 
+    chronic disease.
+
+    **The Prediciton Task**
+    Our primary objective is to build a classification system for the 'DEATH' target variable. In this model, a value of 1 signifies mortality while 0 indicates 
+    the patient was successfully discharged or recovered. By analyzing these historical records, we aim to uncover the hidden patterns that determine which 
+    combination of health factors leads to the highest risk of fatal complications.
     
     **Why This Matters (The "So What"):**
-    In a high-pressure healthcare environment, resource allocation is a zero-sum game. Stratifying patient risk effectively 
-    is a matter of life and death. By identifying high-risk cases early, healthcare providers can prioritize Intensive Care Unit (ICU) 
-    beds, ventilators, and critical care staff for those statistically most likely to face severe outcomes, ultimately 
-    improving clinical efficiency and increasing survival rates.
+    The "so what" of this project lies in the reality of scarcity within healthcare systems. During a public health crisis, hospitals often reach a breaking point 
+    where the number of patients exceeds the number of available Intensive Care Unit (ICU) beds and ventilators. This project transforms raw medical data into a 
+    triage support tool.
+    Instead of treating every patient with a "first-come, first-served" approach, healthcare administrators can use these predictive insights to prioritize limited 
+    critical care resources for the most vulnerable populations. By identifying high-risk individuals the moment they enter the system, we can shift from a reactive 
+    stance to a proactive strategy, potentially saving lives through earlier intervention and more efficient staff allocation
     """)
 
     st.subheader("Dataset Statistics & Features")
@@ -54,13 +60,12 @@ with tab1:
 
     st.subheader("Modeling Approach & Key Findings")
     st.write("""
-    The original dataset was heavily imbalanced, with 947,320 recoveries. To ensure the model learned the characteristics of 
-    mortality as effectively as recovery, I performed undersampling to create a balanced subset for training. I tested five 
-    distinct algorithms: Logistic Regression, Decision Trees, Random Forests, LightGBM, and a Neural Network (MLP).
-    
-    **The Result:** The Neural Network emerged as the top performer with an **F1 score of 0.9068**. While all models 
-    performed admirably, the Neural Network's ability to capture deep, non-linear interactions between comorbidities 
-    makes it the most robust choice for deployment in a clinical setting.
+    To ensure the highest accuracy, our approach involved a rigorous "tournament" between five different machine learning architectures: Logistic Regression, 
+    Decision Trees, Random Forests, LightGBM, and a Neural Network (MLP). A major technical hurdle was the initial data imbalance, as survivors far outnumbered 
+    fatalities. To solve this, we utilized a balanced undersampling technique, creating a robust training set of 10,000 records where both outcomes were represented 
+    equally.Our findings were definitive: The Neural Network (Multi-Layer Perceptron) emerged as the champion model, achieving an F1 score of approximately 0.9068. 
+    We discovered that while individual conditions like diabetes are significant, the interaction between advanced age and respiratory complications (pneumonia) served 
+    as the most powerful predictor of patient mortality. This confirms that complex, non-linear models are essential for capturing the multifaceted nature of human health during a viral outbreak.
     """)
 
 # --- TAB 2: DESCRIPTIVE ANALYTICS ---
@@ -276,4 +281,5 @@ with tab4:
             fig, ax = plt.subplots()
             shap.plots.waterfall(user_shap_values[0])
             st.pyplot(fig)
+
 
