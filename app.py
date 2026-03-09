@@ -111,12 +111,12 @@ with tab3:
     # 2. Decision Tree Logic Path
     st.image("best_decision_tree.png", caption="Decision Tree Logic Path")
     st.write("The tree structure reveals that Hospitalization and Age are the most critical initial splitters for mortality risk. This provides a transparent 'if-then' roadmap that clinicians can use to audit individual risk predictions.")
-    [Image of a decision tree visualization showing clinical splitting logic]
+    
 
     # 3. Decision Tree ROC Curve
     st.image("decision_tree_roc.png", caption="Decision Tree ROC Curve")
     st.write("The Decision Tree ROC curve shows robust discriminatory power with a competitive AUC. It demonstrates that even a simple, interpretable model can effectively separate high-risk cases from survivors.")
-    [Image of a Receiver Operating Characteristic curve plot]
+    
 
     # 4. Random Forest
     st.image("random_forest_roc_curve.png", caption="Random Forest ROC Curve")
@@ -129,7 +129,7 @@ with tab3:
     # 6. Neural Network
     st.image("model_accuracy and model_loss.png", caption="Neural Network Training History")
     st.write("The training history shows both loss and accuracy converging steadily over five epochs. The lack of a widening gap between the training and validation lines confirms the model is well-generalized and not overfitting.")
-    [Image of a neural network training history plot showing loss and accuracy curves]
+    
 
     st.divider()
 
@@ -207,5 +207,6 @@ with tab4:
             st.pyplot(fig)
         else:
             st.info("Waterfall plots are available for tree-based models (LightGBM, Random Forest, Decision Tree).")
+
 
 
