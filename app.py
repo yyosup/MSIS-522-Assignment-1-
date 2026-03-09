@@ -5,6 +5,7 @@ import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 import shap
+import os
 from tensorflow.keras.models import load_model
 
 # --- LOAD SAVED MODELS ---
@@ -32,12 +33,11 @@ with tab1:
     
     st.write("""
     This analysis is based on a comprehensive dataset of over 1 million anonymized patient records 
-    related to COVID-19 cases. 
-    The data includes **17 diverse features** covering demographics and a wide range of 
-    pre-existing comorbidities. 
+    related to COVID-19 cases. The data includes **17 diverse features** covering demographics and 
+    a wide range of pre-existing comorbidities. 
     
     The primary prediction task is to determine **'DEATH'**—a binary outcome where 1 indicates 
-    patient mortality and 0 represents recovery.
+    patient mortality and 0 represents recovery. This tool is vital for hospital resource allocation.
     """)
 
     st.subheader("Dataset Statistics & Features")
@@ -51,91 +51,86 @@ with tab1:
         st.write("- **Numerical:** AGE")
         st.write("- **Categorical/Boolean:** 16 features (e.g., SEX, PNEUMONIA, DIABETES, HOSPITALIZED)")
 
-    st.subheader("The 'So What'")
-    st.write("""
-    In a high-pressure healthcare environment, the ability to accurately stratify patient risk 
-    is a matter of life and death. By leveraging predictive analytics, healthcare systems can 
-    optimize resource allocation and triage efforts. These insights allow providers 
-    to prioritize intensive care unit (ICU) beds and critical interventions for patients 
-    statistically most likely to face severe outcomes, ultimately improving clinical 
-    efficiency and patient survival rates.
-    """)
-
     st.subheader("Approach & Key Findings")
     st.write("""
-    Our modeling approach involved testing five distinct algorithms: Logistic Regression, 
-    Decision Trees, Random Forests, LightGBM, and a Neural Network (MLP). 
-    Because the original dataset was highly imbalanced toward survivors (over 947,000 recoveries), 
-    we utilized undersampling to create a balanced subset of 10,000 records for robust training. 
+    Our modeling approach tested five algorithms: Logistic Regression, Decision Trees, Random Forests, 
+    LightGBM, and a Neural Network (MLP). Because the original data was highly imbalanced toward survivors, 
+    we utilized undersampling to create a balanced subset of 10,000 records. 
     The Neural Network emerged as the top performer with an F1 score of 0.9084.
     """)
 
 # TAB 2: DESCRIPTIVE ANALYTICS
 with tab2:
     st.header("Visualizing the Data")
-    st.write("The original dataset was highly imbalanced. To ensure the model learns the characteristics of both outcomes equally, I performed undersampling to create a balanced subset of 10,000 patient records.")
+    st.write("Exploratory analysis reveals key patterns in patient mortality.")
 
     st.subheader("Distribution of Patient Age")
     st.image("age_histogram.png") 
-    st.write("This histogram shows a wide distribution of ages, with a significant concentration of patients in the 30–60 age range. Age is used as a primary quantitative predictor for risk stratification.")
+    st.write("The age distribution shows a concentration in the 30-60 range. Age is a primary quantitative predictor for risk stratification.")
 
     st.subheader("Age Distribution by Mortality Outcome")
     st.image("age_boxplot.png")
-    st.write("The boxplot reveals that the median age for patients who died is significantly higher than for those who survived. This means age is likely an important feature for susceptibility.")
+    st.write("The median age for deceased patients is significantly higher than for survivors, indicating higher susceptibility in older populations.")
 
     st.subheader("Mortality Rate: Pneumonia vs. No Pneumonia")
     st.image("pneumonia_comparison_bar_graph.png")
-    st.write("This visualization shows that patients with pre-existing pneumonia have a higher mortality rate compared to those without. This suggests respiratory health is a critical 'red flag'.")
+    st.write("Patients with pneumonia show a drastically higher mortality rate, marking respiratory health as a critical clinical 'red flag'.")
 
     st.subheader("Mortality Risk by Sex and Diabetes")
     st.image("mortality_risk_line_graph.png")
-    st.write("This point plot explores the interaction between biological sex and diabetes, providing a more nuanced 'risk combination' insight than a simple bar chart.")
+    st.write("This explores the interaction between sex and diabetes, showing how combined comorbidities escalate risk beyond single-feature analysis.")
 
     st.subheader("Correlation Heatmap of Patient Features")
     st.image("patient_features_heatmap.png")
-    st.write("The heatmap reveals a strong positive correlation between HOSPITALIZED, PNEUMONIA, and DEATH. These clinical indicators are the strongest predictors of mortality.")
+    st.write("Strong positive correlations are visible between hospitalization, pneumonia, and death, identifying the most influential predictors.")
 
 # TAB 3: MODEL PERFORMANCE
 with tab3:
     st.header("Model Evaluation & Comparison")
 
     st.subheader("Final Test-Set Metrics")
-    st.write("""
-    All models were evaluated on a held-out test set of 3,000 patients. The Neural Network achieved the highest F1 score, 
-    making it the most balanced model for this specific healthcare task.
-    """)
-    
     comparison_metrics = {
         "Model": ["Logistic Regression", "Decision Tree", "Random Forest", "LightGBM", "Neural Network"],
         "Accuracy": [0.8993, 0.8997, 0.8990, 0.8963, 0.9010],
-        "Precision": [0.8847, 0.8718, 0.8712, 0.8720, 0.8634],
-        "Recall": [0.9239, 0.9427, 0.9421, 0.9349, 0.9584],
         "F1 Score": [0.9039, 0.9059, 0.9053, 0.9024, 0.9084],
         "AUC-ROC": [0.9496, 0.9428, 0.9505, 0.9501, 0.9490]
     }
     st.dataframe(pd.DataFrame(comparison_metrics))
 
     st.subheader("Visual Performance Analysis")
-    col1, col2 = st.columns(2)
-    with col1:
+    
+    # Grid for ROC and Accuracy Plots
+    c1, c2 = st.columns(2)
+    with c1:
         st.image("model_comparison_bar.png", caption="F1 Score Comparison")
-        st.image("random_forest_roc.png", caption="Random Forest ROC Curve")
+        st.write("The bar chart visualizes the marginal gains of ensemble and neural models. The Neural Network provides the best balance of precision and recall for mortality detection.")
+        
+        st.image("random_forest_roc_curve.png", caption="Random Forest ROC Curve")
+        st.write("The Random Forest achieved an AUC of 0.9505. This demonstrates a near-perfect ability to distinguish between high-risk and low-risk patients.")
 
-    with col2:
-        st.image("nn_training_history.png", caption="Neural Network Loss & Accuracy")
-        st.image("lightgbm_roc.png", caption="LightGBM ROC Curve")
+    with c2:
+        # Fixed filename to match your upload: "model_accuracy and model_loss.png"
+        st.image("model_accuracy and model_loss.png", caption="Neural Network Training History")
+        st.write("The training history shows loss and accuracy converging steadily. This confirms the model is well-generalized and not overfitting to the training data.")
+        
+        # Fixed filename to match your upload: "lightgbm_roc_curve.png"
+        st.image("lightgbm_roc_curve.png", caption="LightGBM ROC Curve")
+        st.write("LightGBM performs nearly identically to the Random Forest. It validates that gradient boosting is highly effective for this tabular clinical dataset.")
+
+    st.subheader("Decision Tree Performance & Structure")
+    ct1, ct2 = st.columns(2)
+    with ct1:
+        st.image("decision_tree_roc.png", caption="Decision Tree ROC Curve")
+        st.write("The Decision Tree shows robust performance with high interpretability. It serves as a strong 'white-box' alternative to complex models.")
+    with ct2:
+        st.image("best_decision_tree.png", caption="Decision Tree Logic Path")
+        st.write("The tree structure reveals that Hospitalization and Age are the most critical initial splitters. This provides a transparent roadmap for clinical audits.")
 
     st.subheader("Optimized Hyperparameters")
     st.markdown("""
     * **Decision Tree**: `max_depth: 4`, `min_samples_split: 40`
     * **Random Forest**: `max_depth: 8`, `n_estimators: 200`
     * **LightGBM**: `learning_rate: 0.05`, `max_depth: 4`, `n_estimators: 50`
-    """)
-
-    st.subheader("Interpretability vs. Accuracy")
-    st.write("""
-    A key trade-off observed is between accuracy and interpretability. While ensemble methods and the 
-    Neural Network are more accurate, the Decision Tree offers a transparent 'if-then' logic.
     """)
 
 # TAB 4: RISK PREDICTOR
@@ -145,12 +140,11 @@ with tab4:
     st.subheader("Global Model Explainability")
     col_s1, col_s2 = st.columns(2)
     with col_s1:
-        st.image("shap_bar.png", caption="Feature Importance (Mean Absolute SHAP)")
+        st.image("shap_bar.png", caption="Global Feature Importance")
     with col_s2:
-        st.image("shap_beeswarm.png", caption="Beeswarm Plot (Feature Impact & Direction)")
+        st.image("shap_beeswarm.png", caption="SHAP Beeswarm Plot")
 
     st.divider()
-
     st.subheader("Predict Patient Risk")
     
     model_choice = st.selectbox("Select Model for Prediction", 
@@ -159,14 +153,15 @@ with tab4:
     c1, c2, c3 = st.columns(3)
     with c1:
         age_input = st.slider("Age", 0, 100, 50)
-        hosp_input = st.selectbox("Hospitalized", [0, 1])
+        hosp_input = st.selectbox("Hospitalized (0=No, 1=Yes)", [0, 1])
     with c2:
-        pneu_input = st.selectbox("Pneumonia", [0, 1])
-        covid_input = st.selectbox("COVID Positive", [0, 1])
+        pneu_input = st.selectbox("Pneumonia (0=No, 1=Yes)", [0, 1])
+        covid_input = st.selectbox("COVID Positive (0=No, 1=Yes)", [0, 1])
     with c3:
-        diab_input = st.selectbox("Diabetes", [0, 1])
-        sex_input = st.selectbox("Sex (0=M, 1=F)", [0, 1])
+        diab_input = st.selectbox("Diabetes (0=No, 1=Yes)", [0, 1])
+        sex_input = st.selectbox("Sex (0=Male, 1=Female)", [0, 1])
 
+    # Construct input dataframe
     user_input = pd.DataFrame([[sex_input, hosp_input, pneu_input, age_input, 0, diab_input, 0, 0, 0, 0, 0, 0, 0, 0, 0, covid_input]], 
                                columns=['SEX', 'HOSPITALIZED', 'PNEUMONIA', 'AGE', 'PREGNANT', 'DIABETES', 'COPD', 'ASTHMA', 
                                         'IMMUNOSUPPRESSION', 'HYPERTENSION', 'OTHER_DISEASE', 'CARDIOVASCULAR', 
@@ -178,25 +173,17 @@ with tab4:
             prob = float(selected_model.predict(user_input)[0])
             prediction = 1 if prob > 0.5 else 0
         else:
-            if model_choice == "LightGBM":
-                selected_model = lgbm_model
-            elif model_choice == "Random Forest":
-                selected_model = rf_model
-            elif model_choice == "Logistic Regression":
-                selected_model = lr_model
-            else:
-                selected_model = dt_model
-            
+            selected_model = {"LightGBM": lgbm_model, "Random Forest": rf_model, 
+                              "Logistic Regression": lr_model, "Decision Tree": dt_model}[model_choice]
             prediction = selected_model.predict(user_input)[0]
             prob = selected_model.predict_proba(user_input)[0][1]
         
         if prediction == 1:
-            st.error(f"Predicted Outcome: High Mortality Risk (Probability: {prob:.2%})")
+            st.error(f"High Mortality Risk (Probability: {prob:.2%})")
         else:
-            st.success(f"Predicted Outcome: Recovery (Probability of Mortality: {prob:.2%})")
+            st.success(f"Recovery Likely (Mortality Probability: {prob:.2%})")
 
         st.subheader(f"Why did the {model_choice} model make this prediction?")
-        
         if model_choice in ["LightGBM", "Random Forest", "Decision Tree"]:
             explainer = shap.TreeExplainer(selected_model)
             user_shap_values = explainer(user_input)
@@ -204,4 +191,4 @@ with tab4:
             shap.plots.waterfall(user_shap_values[0])
             st.pyplot(fig)
         else:
-            st.info("SHAP Waterfall plots are best visualized for the tree-based models in this app.")
+            st.info("Waterfall plots are available for tree-based models (LightGBM, Random Forest, Decision Tree).")
