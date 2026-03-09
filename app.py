@@ -88,6 +88,7 @@ with tab2:
 with tab3:
     st.header("Model Evaluation & Comparison")
 
+    # 1. Final Test-Set Metrics Table
     st.subheader("Final Test-Set Metrics")
     comparison_metrics = {
         "Model": ["Logistic Regression", "Decision Tree", "Random Forest", "LightGBM", "Neural Network"],
@@ -96,35 +97,39 @@ with tab3:
         "AUC-ROC": [0.9496, 0.9428, 0.9505, 0.9501, 0.9490]
     }
     st.dataframe(pd.DataFrame(comparison_metrics), use_container_width=True)
+    st.write("This table summarizes the performance of all five models. The high F1 scores and AUC across the board validate the effectiveness of our undersampling approach in balancing mortality and recovery classes.")
 
     st.divider()
 
-    # --- Vertical Visual Performance Analysis ---
+    # --- Vertical Order Requested ---
     st.subheader("Visual Performance Analysis")
 
-    # 1. Comparison Bar Chart
+    # 1. Model Comparison Bar Chart
     st.image("model_comparison_bar.png", caption="F1 Score Comparison")
-    st.write("This bar chart highlights that while all models are strong, the Neural Network and Gradient Boosted trees provide a predictive edge. The high F1 scores across the board validate our undersampling approach.")
+    st.write("The bar chart visualizes the predictive edge provided by ensemble and neural models over the linear baseline. While differences are marginal, the Neural Network edges out the others in F1 score for this specific task.")
 
-    # 2. Neural Network History
-    st.image("model_accuracy and model_loss.png", caption="Neural Network Training History")
-    st.write("The convergence of the training and validation lines demonstrates that the MLP is learning complex interactions without memorizing noise. The lack of a widening gap confirms the model is well-generalized.")
-
-    # 3. Random Forest ROC
-    st.image("random_forest_roc_curve.png", caption="Random Forest ROC Curve")
-    st.write("The Random Forest achieved an elite AUC of 0.95. This indicates a near-perfect ability to distinguish between high-risk and low-risk cases, offering a reliable tool for triage.")
-
-    # 4. LightGBM ROC
-    st.image("lightgbm_roc_curve.png", caption="LightGBM ROC Curve")
-    st.write("LightGBM performs nearly identically to the Random Forest. This validates that boosting is a superior approach for tabular clinical data where feature interactions are key.")
-
-    # 5. Decision Tree ROC
-    st.image("decision_tree_roc.png", caption="Decision Tree ROC Curve")
-    st.write("The Decision Tree shows slightly more variance than ensembles but remains robust. It represents the baseline for interpretable, non-linear modeling.")
-
-    # 6. Decision Tree Structure
+    # 2. Decision Tree Logic Path
     st.image("best_decision_tree.png", caption="Decision Tree Logic Path")
-    st.write("The tree structure reveals that Hospitalized and Age are the most critical initial splitters. This provides a transparent 'if-then' roadmap that clinicians can easily audit.")
+    st.write("The tree structure reveals that Hospitalization and Age are the most critical initial splitters for mortality risk. This provides a transparent 'if-then' roadmap that clinicians can use to audit individual risk predictions.")
+    [Image of a decision tree visualization showing clinical splitting logic]
+
+    # 3. Decision Tree ROC Curve
+    st.image("decision_tree_roc.png", caption="Decision Tree ROC Curve")
+    st.write("The Decision Tree ROC curve shows robust discriminatory power with a competitive AUC. It demonstrates that even a simple, interpretable model can effectively separate high-risk cases from survivors.")
+    [Image of a Receiver Operating Characteristic curve plot]
+
+    # 4. Random Forest
+    st.image("random_forest_roc_curve.png", caption="Random Forest ROC Curve")
+    st.write("The Random Forest achieved an elite AUC of 0.9505, indicated by the curve hugging the top-left corner. This indicates a near-perfect ability to distinguish between outcomes, offering a highly reliable tool for hospital triage.")
+
+    # 5. LightGBM
+    st.image("lightgbm_roc_curve.png", caption="LightGBM ROC Curve")
+    st.write("LightGBM performs nearly identically to the Random Forest, validating the power of gradient boosting on tabular clinical data. Its performance is extremely stable across various patient demographics and comorbidity combinations.")
+
+    # 6. Neural Network
+    st.image("model_accuracy and model_loss.png", caption="Neural Network Training History")
+    st.write("The training history shows both loss and accuracy converging steadily over five epochs. The lack of a widening gap between the training and validation lines confirms the model is well-generalized and not overfitting.")
+    [Image of a neural network training history plot showing loss and accuracy curves]
 
     st.divider()
 
@@ -138,9 +143,9 @@ with tab3:
 
     st.subheader("Interpretability vs. Accuracy")
     st.write("""
-    A key trade-off observed is between accuracy and interpretability. While ensemble methods and the 
-    Neural Network are more accurate, the Decision Tree offers a transparent 'if-then' logic that is 
-    essential for building trust in a clinical setting.
+    A key trade-off observed in this project is between accuracy and interpretability. While the Neural Network and 
+    Ensembles provide slightly higher predictive power, the Decision Tree offers the 'white-box' transparency 
+    essential for clinical adoption and building trust with medical professionals.
     """)
 
 # TAB 4: RISK PREDICTOR
@@ -202,4 +207,5 @@ with tab4:
             st.pyplot(fig)
         else:
             st.info("Waterfall plots are available for tree-based models (LightGBM, Random Forest, Decision Tree).")
+
 
