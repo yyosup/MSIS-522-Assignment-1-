@@ -36,7 +36,7 @@ with tab1:
     a wide range of pre-existing comorbidities. 
     
     The primary prediction task is to determine **'DEATH'**—a binary outcome where 1 indicates 
-    patient mortality and 0 represents recovery. This task is vital for resource allocation and triage.
+    patient mortality and 0 represents recovery.
     """)
 
     st.subheader("Dataset Statistics & Features")
@@ -48,41 +48,38 @@ with tab1:
     with col_b:
         st.write("**Feature Types:**")
         st.write("- **Numerical:** AGE")
-        st.write("- **Categorical/Boolean:** 16 features (e.g., SEX, PNEUMONIA, DIABETES, HOSPITALIZED)")
+        st.write("- **Categorical/Boolean:** 16 features")
 
     st.subheader("Approach & Key Findings")
     st.write("""
     Our modeling approach involved testing five distinct algorithms: Logistic Regression, 
-    Decision Trees, Random Forests, LightGBM, and a Neural Network (MLP). Because the original 
-    dataset was highly imbalanced toward survivors, we utilized undersampling to create a 
-    balanced subset of 10,000 records. The Neural Network emerged as the top performer 
-    with an F1 score of approximately 0.9068.
+    Decision Trees, Random Forests, LightGBM, and a Neural Network (MLP). 
+    The Neural Network emerged as the top performer with an F1 score of approximately 0.9068.
     """)
 
 # --- TAB 2: DESCRIPTIVE ANALYTICS ---
 with tab2:
     st.header("Visualizing the Data")
-    st.write("Exploratory analysis reveals how demographics and comorbidities relate to patient outcomes.")
-
+    
     st.subheader("Distribution of Patient Age")
     st.image("age_histogram.png") 
-    st.write("This histogram shows a wide distribution of ages, with a significant concentration of patients in the 30–60 age range. Age is used as a primary quantitative predictor for risk stratification.")
+    st.write("This histogram shows a wide distribution of ages, with a significant concentration of patients in the 30–60 age range.")
 
     st.subheader("Age Distribution by Mortality Outcome")
     st.image("age_boxplot.png")
-    st.write("The boxplot reveals that the median age for patients who died is significantly higher than for survivors. This confirms that older populations show a higher susceptibility to fatal outcomes.")
+    st.write("The boxplot reveals that the median age for patients who died is significantly higher than for survivors.")
 
     st.subheader("Mortality Rate: Pneumonia vs. No Pneumonia")
     st.image("pneumonia_comparison_bar_graph.png")
-    st.write("Patients with pre-existing pneumonia have a higher mortality rate compared to those without. For clinical triage, this suggests respiratory health is a critical 'red flag' for medical intervention.")
+    st.write("Patients with pre-existing pneumonia have a higher mortality rate compared to those without.")
 
     st.subheader("Mortality Risk by Sex and Diabetes Status")
     st.image("mortality_risk_line_graph.png")
-    st.write("This plot explores the interaction between biological sex and diabetes. It reveals whether specific gender and comorbidity combinations face higher risks, providing nuanced clinical insights.")
+    st.write("This plot explores the interaction between biological sex and diabetes.")
 
     st.subheader("Correlation Heatmap of Patient Features")
     st.image("patient_features_heatmap.png")
-    st.write("The heatmap reveals a strong positive correlation between HOSPITALIZED, PNEUMONIA, and DEATH. These indicators are the strongest predictors of mortality within this dataset.")
+    st.write("The heatmap reveals a strong positive correlation between HOSPITALIZED, PNEUMONIA, and DEATH.")
 
 # --- TAB 3: MODEL PERFORMANCE ---
 with tab3:
@@ -101,25 +98,25 @@ with tab3:
     st.subheader("Visual Performance Analysis")
 
     st.image("model_comparison_bar.png", caption="F1 Score Comparison")
-    st.write("The evaluation reveals that the Neural Network performed best, achieving the highest F1 score. While the Neural Network showed strong predictive power, the tree-based ensemble models provided a superior balance between accuracy and training efficiency.")
+    st.write("The Neural Network performed best, achieving the highest F1 score.")
 
     st.image("best_decision_tree.png", caption="Decision Tree Logic Path")
-    st.write("The visualization shows that HOSPITALIZED is the most significant initial splitter. For those hospitalized, AGE becomes the next most critical factor, allowing clinicians to follow a clear 'if-then' logic.")
+    st.write("The visualization shows that HOSPITALIZED is the most significant initial splitter.")
 
     st.image("decision_tree_roc.png", caption="Decision Tree ROC Curve")
-    st.write("The Decision Tree ROC curve shows robust discriminatory power. While slightly lower than ensemble methods, it offers transparency that is easier for clinical professionals to trust and audit.")
+    st.write("The Decision Tree ROC curve shows robust discriminatory power.")
 
     st.image("random_forest_roc_curve.png", caption="Random Forest ROC Curve")
-    st.write("The Random Forest model achieved an AUC-ROC of 0.9505. By aggregating 200 trees, the model reduces variance found in single trees, leading to more stable and reliable predictions.")
+    st.write("The Random Forest model achieved an AUC-ROC of 0.9505.")
 
     st.image("lightgbm_roc_curve.png", caption="LightGBM ROC Curve")
-    st.write("The high AUC-ROC score for LightGBM indicates the model is extremely effective at stratifying patient risk. It performs exceptionally well on tabular data with complex feature interactions.")
+    st.write("The high AUC-ROC score for LightGBM indicates the model is extremely effective at stratifying risk.")
 
     if os.path.exists("model_loss.png"):
         st.image("model_loss.png", caption="Model Loss History")
     if os.path.exists("model_accuracy.png"):
         st.image("model_accuracy.png", caption="Model Accuracy History")
-    st.write("The training history plots show a healthy convergence, with both training and validation loss decreasing steadily. The lack of a significant gap indicates the model is not overfitting.")
+    st.write("The training history plots show a healthy convergence without overfitting.")
 
     st.divider()
     st.subheader("Optimized Hyperparameters")
@@ -186,4 +183,4 @@ with tab4:
             shap.plots.waterfall(user_shap_values[0])
             st.pyplot(fig)
         else:
-            st.info("Waterfall plots are best visualized for the tree-based models in this application.")
+            st.info("Waterfall plots are best visualized for the tree-based models.")
